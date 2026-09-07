@@ -79,3 +79,25 @@ intervention recommendations. A graph alone cannot supply numerical causal effec
 
 Next proof: encode one evidence-backed mechanism, inspect its assumptions, and compare
 its predicted trajectories with observations before adding any orchestration.
+
+## HTTP and MCP
+
+`POST /api/run` accepts an optional inline `model` or database `model_id`, plus `initial`,
+`interventions`, `steps`, `draws`, `seed`, and `persist`. With neither model selector it uses
+the synthetic example. Inline/demo runs default to `persist: false`; `model_id` runs are
+saved. Persistence requires `DATABASE_URL` and the schema; failures never silently fall
+back to unsaved results. Responses include `persisted` and the complete model snapshot.
+
+Set `CASUAR_MCP_TOKEN` privately. Authorization is `Bearer <derived-key>`, where
+`derived-key = HMAC-SHA256(CASUAR_MCP_TOKEN, "casuar-causal-run-v1")` encoded as hex.
+The server fails closed without the secret. This key is for backend use only.
+
+Limits: 64 KiB request, 32 variables/parameters, 120 steps, 5000 draws, and 500000
+variable updates per scenario. Large workloads must be reduced or split. The endpoint
+runs reviewed arithmetic expressions; it never executes arbitrary Python from requests.
+
+The existing `fedorivanenko/casuar` MCP hosts a pinned copy of this runtime under
+`causal_runtime/` and exposes `run_model`. Its Python route is `/api/causal-run`.
+This keeps OAuth and Python compute in one existing Vercel project with the same private
+secret. A separate deployment of this repo is optional; set `CASUAR_CAUSAL_RUN_URL` on
+the MCP service if using one. Both services then need the same secret.
