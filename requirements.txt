@@ -1,0 +1,2 @@
+# Optional: only required for --db. The simulation uses Python's standard library.
+psycopg[binary]==3.2.10

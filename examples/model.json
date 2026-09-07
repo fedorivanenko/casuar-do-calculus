@@ -1,0 +1,14 @@
+{
+  "name": "synthetic-feedback",
+  "version": 1,
+  "time_unit": "arbitrary step",
+  "assumptions": ["Synthetic mechanics only; no medical interpretation.", "All parents are read at t-1; independent Gaussian disturbances.", "Parameters are sampled once per trajectory and remain fixed."],
+  "evidence": [],
+  "parameters": {"gain": {"mean": 0.4, "sd": 0.05}},
+  "variables": {
+    "input": {"initial": 1, "equation": "input + u", "noise_sd": 0.02},
+    "modifier": {"initial": 1, "equation": "modifier", "noise_sd": 0},
+    "state": {"initial": 0, "equation": "0.7 * state + gain * input * modifier - 0.1 * response + u", "noise_sd": 0.03},
+    "response": {"initial": 0, "equation": "0.5 * response + 0.2 * state + u", "noise_sd": 0.02}
+  }
+}
