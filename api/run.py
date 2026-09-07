@@ -1,3 +1,4 @@
 from endpoint import Handler
 
-handler = Handler
+class handler(Handler):
+    pass
